@@ -4,9 +4,9 @@ import de.joker.utils.day
 
 fun main() = day<List<Pair<Char, Int>>, Int>(2025, 1) {
     input {
-        it.map {
-            val identifier = it[0]
-            val value = it.substring(1).toInt()
+        it.map { row ->
+            val identifier = row[0]
+            val value = row.substring(1).toInt()
 
             identifier to value
         }

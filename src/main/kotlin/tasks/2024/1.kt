@@ -9,8 +9,8 @@ fun main() = day<Pair<List<Int>, List<Int>>, Int>(2024, 1) {
         val listOne = mutableListOf<Int>()
         val listTwo = mutableListOf<Int>()
 
-        it.forEach {
-            val split = it.split("   ")
+        it.forEach { row ->
+            val split = row.split("   ")
             listOne += split[0].toInt()
             listTwo += split[1].toInt()
         }

@@ -66,7 +66,7 @@ class Day<I, O> @PublishedApi internal constructor(val year: Int, val day: Int) 
     }
 
     fun run() {
-        if (_mapper == null) error("Input mapper cannot be null!")
+        if (_mapper == null) _mapper = { it as I } // this is really unsafe, but whatever
 
         info("Day $day ($year)")
         term.println()
