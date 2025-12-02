@@ -5,7 +5,7 @@ import de.joker.utils.day
 fun main() = day<List<LongRange>, Long>(2025, 2) {
     input {
         it.joinToString("").split(",").map { range ->
-            val (start, end) = range.split("-").map { it.toLong() }
+            val (start, end) = range.split("-").map { value -> value.toLong() }
 
             start..end
         }
@@ -25,28 +25,17 @@ fun main() = day<List<LongRange>, Long>(2025, 2) {
             return firstHalf == secondHalf
         }
 
-        var invalidIds = 0L
-
-        it.forEach { range ->
-            for (id in range) {
-                if (isInvalid(id)) {
-                    invalidIds += id
-                }
-            }
+        it.sumOf { range ->
+            range.filter { id -> isInvalid(id) }.sum()
         }
-
-        invalidIds
     }
 
     part(2, 4174379265) {
-        var invalidIds = 0L
-
-        it.forEach { range ->
+        fun isInvalid(range: LongRange): Boolean {
+            var invalid = false
             for (id in range) {
                 val idStr = id.toString()
                 val length = idStr.length
-
-                var isInvalid = false
 
                 for (subLength in 1..(length / 2)) {
                     if (length % subLength != 0) continue
@@ -55,17 +44,16 @@ fun main() = day<List<LongRange>, Long>(2025, 2) {
                     val repetitions = length / subLength
 
                     if (subStr.repeat(repetitions) == idStr) {
-                        isInvalid = true
+                        invalid = true
                         break
                     }
                 }
-
-                if (isInvalid) {
-                    invalidIds += id
-                }
             }
+            return invalid
         }
 
-        invalidIds
+        it.sumOf { range ->
+            range.filter { id -> isInvalid(id..id) }.sum()
+        }
     }
 }
