@@ -22,4 +22,30 @@ fun main() = day<Pair<List<LongRange>, List<Long>>, Long>(2025, 5) {
         val (ranges, ids) = it
         ids.count { id -> ranges.any { range -> id in range } }.toLong()
     }
+
+    /*part(2, 14) { // Causes memory issues with large ranges
+        val (ranges, _) = it
+        ranges.flatMap { it.toList() }.distinct().count().toLong()
+    }*/
+
+    part(2, 14) {
+        val (ranges, _) = it
+
+        val sorted = ranges.sortedBy { r -> r.first }
+
+        val merged = mutableListOf<LongRange>()
+        var current = sorted.first()
+
+        for (range in sorted.drop(1)) {
+            if (range.first <= current.last + 1) {
+                current = current.first..maxOf(current.last, range.last)
+            } else {
+                merged += current
+                current = range
+            }
+        }
+        merged += current
+
+        merged.sumOf { r -> (r.last - r.first + 1) }
+    }
 }
