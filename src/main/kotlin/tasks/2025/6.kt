@@ -14,8 +14,8 @@ enum class Operator(val char: Char) {
 
 data class Equation(val numbers: List<Long>, val operators: Operator)
 
-fun main() = day<List<Equation>, Long>(2025, 6) {
-    input { lines ->
+fun main() = day<List<String>, Long>(2025, 6) {
+    part(1, 4277556) { lines ->
         val (opLinesRaw, numLinesRaw) = lines
             .filter { it.isNotBlank() }
             .partition { line -> line.contains('+') || line.contains('*') }
@@ -37,13 +37,11 @@ fun main() = day<List<Equation>, Long>(2025, 6) {
             "Not all number rows have the same amount of numbers"
         }
 
-        operatorRow.mapIndexed { index, operator ->
+        val equations = operatorRow.mapIndexed { index, operator ->
             val numbers = numberRows.map { it[index] }
             Equation(numbers, operator)
         }
-    }
 
-    part(1, 4277556) { equations ->
         equations.sumOf { eq ->
             when (eq.operators) {
                 Operator.PLUS -> eq.numbers.sum()
@@ -51,4 +49,60 @@ fun main() = day<List<Equation>, Long>(2025, 6) {
             }
         }
     }
+
+    part(2, 3263827) { lines ->
+        val maxWidth = lines.maxOf { it.length }
+
+        val cols: List<List<Char>> =
+            (0 until maxWidth).map { x ->
+                lines.map { row ->
+                    if (x < row.length) row[x] else ' '
+                }
+            }
+
+        var grandTotal = 0L
+
+        var currentNumbers = mutableListOf<Long>()
+        var currentOperator: Operator? = null
+
+        for (x in cols.lastIndex downTo 0) {
+            val col = cols[x]
+
+            val digits = mutableListOf<Char>()
+            var columnIsSpace = true
+
+            for (char in col) {
+                if (char != ' ') {
+                    columnIsSpace = false
+
+                    if (char.isDigit()) {
+                        digits += char
+                    } else if (char == '+' || char == '*') {
+                        currentOperator = Operator.fromChar(char)
+                    }
+                }
+            }
+
+            if (digits.isNotEmpty()) {
+                val value = digits.joinToString("").toLong()
+                currentNumbers += value
+            }
+
+            if (columnIsSpace || x == 0) {
+                if (currentNumbers.isNotEmpty() && currentOperator != null) {
+                    val blockResult = when (currentOperator!!) {
+                        Operator.PLUS -> currentNumbers.sum()
+                        Operator.MULTIPLY -> currentNumbers.reduce { acc, n -> acc * n }
+                    }
+                    grandTotal += blockResult
+                }
+
+                currentNumbers = mutableListOf()
+                currentOperator = null
+            }
+        }
+
+        grandTotal
+    }
+
 }
